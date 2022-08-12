@@ -1,0 +1,10 @@
+---
+  - name: Set timezone
+    hosts: rpi
+    become: yes
+
+    tasks:
+
+      - name: set timezone to Africa/Johannesburg
+        timezone:
+          name: Africa/Johannesburg
