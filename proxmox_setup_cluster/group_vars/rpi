@@ -1,0 +1,7 @@
+---
+pve_group: rpi
+pve_cluster_enabled: yes
+pve_cluster_clustername: ScoopeSome
+pve_manage_hosts_enabled : yes
+
+pve_reboot_on_kernel_update: true
