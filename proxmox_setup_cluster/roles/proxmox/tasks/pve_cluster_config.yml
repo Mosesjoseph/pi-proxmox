@@ -46,14 +46,6 @@
     - "'_pve_active_cluster' in hostvars[item]"
     - "hostvars[item]['_pve_active_cluster'] == pve_cluster_clustername"
 
-- name: say something else
-  shell: echo "I'm the other guy------------->{{ pve_cluster_clustername }},{{ pve_cluster_addr0 }},{{ pve_cluster_conf }}"
-  # shell: whereis pvecm
-  register: runcmd
-  tags: runcmd
-
-- debug: msg="{{runcmd.stdout}}"
-
 - name: Initialize a Proxmox cluster
   command: >-
     pvecm create {{ pve_cluster_clustername }}
