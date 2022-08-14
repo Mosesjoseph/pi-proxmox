@@ -1,0 +1,15 @@
+---
+- hosts: rpi
+  become: True
+  roles:
+    - proxmox
+
+
+# - name: test
+#   hosts: rpi
+#   become: yes
+  
+#   tasks:
+#     - include_role:
+#         name: proxmox
+#         tasks_from: pve_cluster_config
