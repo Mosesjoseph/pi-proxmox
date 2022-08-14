@@ -1,0 +1,5 @@
+---
+- import_playbook: ../proxmox_install/install.yaml
+- import_playbook: ../proxmox_set_timezone/install.yaml
+- import_playbook: ../proxmox_setup_cluster/install.yaml
+- import_playbook: ../proxmox_setup_nfs/install.yaml

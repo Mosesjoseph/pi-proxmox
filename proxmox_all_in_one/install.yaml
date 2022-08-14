@@ -1,0 +1,134 @@
+---
+- name: Verify that all nodes are reachable before running
+  hosts: rpi
+  gather_facts: false
+  max_fail_percentage: 0
+  any_errors_fatal: true
+  tasks:
+    - action: ping
+
+- name: Prepare machines
+  hosts: rpi
+  become: yes
+
+  tasks:
+
+    - name: make sure pip3 is install
+      apt:
+        name: python3-pip
+        state: present
+
+    - name: ensure pexpect is installed in the playbook python
+      pip:
+        name: pexpect
+        state: present
+
+- name: Install proxmox
+  hosts: rpi
+  become: yes
+
+  tasks:
+
+    - name: Get script and set as executable
+      get_url:
+       url: https://raw.githubusercontent.com/pimox/pimox7/442393fd99d214527ecb066de3160108ae32fc66/RPiOS64-IA-Install.sh
+       dest: /home/pi/RPiOS64-IA-Install.sh
+       mode: 0755
+
+    - name: Correct start of file
+      replace:
+        path: /home/pi/RPiOS64-IA-Install.sh
+        regexp: '# !/bin/bash'
+        replace: '#!/bin/bash'
+
+    - name: Run script
+      any_errors_fatal: no
+      ignore_errors: yes
+      ignore_unreachable: yes
+      ansible.builtin.expect:
+        command: "./RPiOS64-IA-Install.sh"
+        responses:
+          'Enter new hostname e.g. RPi4-01-PVE' : "RPiX-PVE-X0{{ play_hosts.index(inventory_hostname)+1 }}"
+          "Enter new static IP and NETMASK e.g. 192.168.0.100\/24" : "192.168.1.10{{ play_hosts.index(inventory_hostname)+1 }}\/24"
+          'gateway' : 'y'
+          'New password' : "raspberry"
+          'Retype new password' : "raspberry"
+        timeout: 3600
+
+    # - name: (reboot) Wait for server to restart
+    #   wait_for_connection:
+    #     delay: 120
+
+    # - name: Run script
+    #   any_errors_fatal: no
+    #   ignore_errors: yes
+    #   ignore_unreachable: yes
+    #   ansible.builtin.expect:
+    #     command: "./script.sh"
+    #     responses:
+    #       'Enter name' : "RPiX-PVE-X0{{ play_hosts.index(inventory_hostname)+5 }}"
+    #       "Enter surname" : "192.168.1.10{{ play_hosts.index(inventory_hostname)+5 }}\/24"
+    #     timeout: 3600
+    #   # register: result
+      
+    #   tags: result
+    # - debug: msg="{{runcmd.result}}"
+
+    - name: (reboot) Wait for server to restart
+      wait_for_connection:
+        delay: 60
+        timeout: 120
+      throttle: 1
+      # register: runcmd
+      # tags: runcmd
+
+    # - name: Wait for play hosts to be up again
+    #   wait_for:
+    #     host: '{{hostvars[item].ansible_host}}'
+    #     port: 22
+    #     state: started
+    #     delay: 120
+    #     timeout: 45
+    #   with_items: '{{play_hosts}}' 
+    #   connection: local
+
+    # - name:
+    #   shell: uptime
+    #   register: runcmd
+    #   tags: runcmd
+
+
+
+- name: Set timezone
+  hosts: rpi
+  become: yes
+  
+  # pre_tasks:
+  #   - name: Check ALL hosts are reacheable before doing the release
+  #     assert:
+  #       that:
+  #         - ansible_play_hosts == groups.rpi
+  #       fail_msg: 1 or more host is UNREACHABLE
+  #       success_msg: ALL hosts are REACHABLE, go on
+  #     run_once: yes
+
+  tasks:
+
+    - name: set timezone to Africa/Johannesburg or Asia/Tokyo
+      timezone:
+        name: Africa/Johannesburg
+
+- name: Cluster the nodes and attach nfs
+  hosts: rpi
+  become: yes
+
+#   # pre_tasks:
+#   #   - name: Check ALL hosts are reacheable before doing the release
+#   #     assert:
+#   #       that:
+#   #         - ansible_play_hosts == groups.rpi
+#   #       fail_msg: 1 or more host is UNREACHABLE
+#   #       success_msg: ALL hosts are REACHABLE, go on
+#   #     run_once: yes
+  roles:
+    - proxmox
