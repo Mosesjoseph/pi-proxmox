@@ -7,5 +7,5 @@ Change directory to "proxmox_install" and run this command
 Change directory to "proxmox_set_timezone" and run this command
 `ansible-playbook -i inventory install.yaml`
 3. To cluster to Pi nodes 
-Change directory to "proxmox_set_timezone" and run this command
+Change directory to "proxmox_setup_cluster" and run this command
 `ansible-playbook -i inventory install.yaml`
