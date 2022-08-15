@@ -1,4 +1,22 @@
 ---
+#ansible-playbook start.yaml --ask-become-pass
+- name: Prepare master
+  hosts: 127.0.0.1
+  connection: local
+  become: yes
+
+  tasks:
+
+    - name: Make sure pip is installed
+      apt:
+        name: python-pip
+        state: present
+
+    - name: Make sure jms is installed
+      pip:
+        name: jmespath
+        state: present
+
 - name: Verify that all nodes are reachable before running
   hosts: rpi
   gather_facts: false
@@ -13,12 +31,12 @@
 
   tasks:
 
-    - name: make sure pip3 is install
+    - name: Make sure pip3 is install
       apt:
         name: python3-pip
         state: present
 
-    - name: ensure pexpect is installed in the playbook python
+    - name: Make sure pexpect is installed in the playbook python
       pip:
         name: pexpect
         state: present
@@ -67,7 +85,7 @@
 
   tasks:
 
-    - name: set timezone to Africa/Johannesburg or Asia/Tokyo
+    - name: Set timezone to Africa/Johannesburg
       timezone:
         name: Africa/Johannesburg
 
