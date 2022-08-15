@@ -67,13 +67,6 @@
 
   tasks:
 
-    - name: set timezone to Africa/Johannesburg or Asia/Tokyo
+    - name: set timezone to Africa/Johannesburg
       timezone:
         name: Africa/Johannesburg
-
-- name: Cluster the nodes and attach nfs
-  hosts: rpi
-  become: yes
-
-  roles:
-    - proxmox

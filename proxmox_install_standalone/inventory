@@ -3,16 +3,10 @@ host_key_checking = False
 ansible_ssh_common_args='-o StrictHostKeyChecking=no -o userknownhostsfile=/dev/null'
 
 [rpi]
-192.168.1.101
-192.168.1.102
-192.168.1.103
-192.168.1.104
-192.168.1.105
-192.168.1.106
-#192.168.1.107
-
+192.168.1.107
 
 [rpi:vars]
 ansible_user=pi
 ansible_password=raspberry
 ansible_python_interpreter=/usr/bin/python3
+
